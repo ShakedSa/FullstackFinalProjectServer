@@ -3,6 +3,8 @@ require('dotenv').config()
 
 const express = require('express')
 
+const cors = require("cors");
+
 const app = express()
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
@@ -24,6 +26,7 @@ db.once('open', () => console.log('Connected to Database'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors({ origin: 'https://snmgarage.onrender.com/', credentials: true }));
 
 
 const treatmentsRouter = require('./routes/api')
