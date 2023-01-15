@@ -1,0 +1,72 @@
+
+POST http://localhost:3000/treatments/login
+Content-Type: application/json
+
+{
+   "email": "shaked@gmail.com",
+   "password": "9999999"
+}
+
+###
+
+
+POST  http://localhost:3000/treatments/signup
+Content-Type: application/json
+
+{
+   "email": "hani@gmail.com",
+   "password": "66666666"
+}
+
+###
+
+POST http://localhost:3000/treatments/forgetpassword 
+Content-Type: application/json
+
+{
+   "email": "benisraelmichael@gmail.com"
+}
+###
+
+POST http://localhost:3000/treatments/dashboard/createTreatment
+Content-Type: application/json
+
+{
+   "treatmentInformation": "Lights changeeeeeee",
+   "workerEmail": "benisraelmichael@gmail.com",
+   "carNumber": "99999999"
+}
+
+###
+
+DELETE http://localhost:3000/treatments/dashboard/delete/130
+Content-Type: application/json
+
+###
+
+PATCH  http://localhost:3000/treatments/dashboard/updates
+Content-Type: application/json
+
+{
+   "treatmentNumber": "21",
+   "treatmentInformation": "Engine change",
+   "workerEmail": "benisraelmichael@gmail.com",
+   "carNumber": "99999999"
+}
+
+###
+
+POST http://localhost:3000/treatments/contact-us
+Content-Type: application/json
+
+{
+   "name": "David",
+   "email": "benisraelmichael@gmail.com",
+   "concern": "payment",
+   "subject": "Do you accept bitcoin?"
+}
+
+###
+
+GET http://localhost:3000/api/dashboard/?page=dhshdsgh&search=Engine
+Content-Type: application/json
