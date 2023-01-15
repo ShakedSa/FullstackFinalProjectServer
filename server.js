@@ -17,6 +17,8 @@ app.use((_, res, next) => {
     next();
 });
 
+app.options('*', cors());
+
 mongoose.set("strictQuery", false)
 mongoose.connect("mongodb+srv://shaked:Jr0karZjxP4veE0d@snm-garage.pjfjf0z.mongodb.net/SnM-Garage?retryWrites=true&w=majority", { useNewUrlParser: true });
 
