@@ -3,7 +3,6 @@ require('dotenv').config()
 
 const express = require('express')
 
-const cors = require("cors");
 
 const app = express()
 const mongoose = require('mongoose')
@@ -11,13 +10,12 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use((_, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://snmgarage.onrender.com/');
     res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, GET, OPTIONS, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
 
-app.options('*', cors());
 
 mongoose.set("strictQuery", false)
 mongoose.connect("mongodb+srv://shaked:Jr0karZjxP4veE0d@snm-garage.pjfjf0z.mongodb.net/SnM-Garage?retryWrites=true&w=majority", { useNewUrlParser: true });
@@ -28,7 +26,6 @@ db.once('open', () => console.log('Connected to Database'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({ origin: 'https://snmgarage.onrender.com/', credentials: true }));
 
 
 const treatmentsRouter = require('./routes/api')
