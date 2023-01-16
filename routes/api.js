@@ -135,22 +135,21 @@ router.post('/contact-us', async (req, res) => {
                 '\n\nWe will do our absolute best to get back to you within the next 24 hours.\n\nThank you and drive safe,\n BestGarageInBraude'
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, async function (error, info) {
             if (error) {
                 console.log(error);
             } else {
                 console.log('Email sent: ' + info.response);
+                const contact = new Contact({
+                    name: req.body.name,
+                    email: req.body.email,
+                    concern: req.body.concern,
+                    subject: req.body.subject
+                })
+                await contact.save();
+                res.status(200).json({ message: 'True' });
             }
         });
-
-        const contact = new Contact({
-            name: req.body.name,
-            email: req.body.email,
-            concern: req.body.concern,
-            subject: req.body.subject
-        })
-        await contact.save();
-        res.status(200).json({ message: 'True' });
 
     } catch (err) {
         res.status(500).json({ message: err.mesage });
