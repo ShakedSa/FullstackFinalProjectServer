@@ -173,18 +173,17 @@ router.get('/dashboard/gettotal/:sessionId', async (req, res) => {
     }
 })
 
-router.get('/dashboard/:sessionId', async (req, res) => {
-    const users = await User.find();
+router.get('/dashboard/:sessionId', (req, res) => {
+    const users = User.find();
     const user = users.find(x => x.sessionId == req.params.sessionId);
-    console.log(user);
-    if (!user) {
+    if (user === null || user === undefined) {
         res.status(400).json({ message: "Invalid session id. Please login again." });
+        return;
     }
-    const treatments = await Treatment.find();
+    const treatments = Treatment.find();
     const userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
     let tempData;
     const searchQuery = req.query.search?.toLowerCase();
-    console.log(searchQuery);
     if (searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' || searchQuery !== '') {
         tempData = userTreatments.filter((treatment) => {
             return treatment.treatmentInformation.toLowerCase().includes(searchQuery);
