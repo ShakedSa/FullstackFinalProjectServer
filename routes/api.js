@@ -176,6 +176,7 @@ router.get('/dashboard/gettotal/:sessionId', async (req, res) => {
 router.get('/dashboard/:sessionId', async (req, res) => {
     const users = await User.find();
     const user = users.find(x => x.sessionId == req.params.sessionId);
+    console.log(user);
     if (!user) {
         res.status(400).json({ message: "Invalid session id. Please login again." });
     }
