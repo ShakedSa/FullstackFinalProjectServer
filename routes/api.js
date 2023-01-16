@@ -18,7 +18,6 @@ var transporter = nodemailer.createTransport({
 // Request to login 
 router.post('/login', async (req, res) => {
     var user;
-    console.log("In login: user:", req.body);
     try {
         const all_users = await User.find();
         user = all_users.find((x) => x.email === req.body.email);
