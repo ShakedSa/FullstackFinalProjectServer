@@ -183,6 +183,7 @@ router.get('/dashboard/:sessionId', async (req, res) => {
     const userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
     let tempData;
     const searchQuery = req.query.search?.toLowerCase();
+    console.log(searchQuery);
     if (searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' || searchQuery !== '') {
         tempData = userTreatments.filter((treatment) => {
             return treatment.treatmentInformation.toLowerCase().includes(searchQuery);
