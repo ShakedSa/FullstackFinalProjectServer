@@ -9,12 +9,13 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use((_, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', 'https://snmgarage.onrender.com/');
-//     res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, GET, OPTIONS, DELETE');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//     next();
-// });
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://snmgarage.onrender.com');
+    req.setHeader('Access-Control-Allow-Origin', 'https://snmgarage.onrender.com');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, GET, OPTIONS, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 
 mongoose.set("strictQuery", false)
