@@ -190,9 +190,7 @@ router.get('/dashboard/:sessionId', async (req, res) => {
     } else {
         tempData = userTreatments;
     }
-    const pageQuery = req.query.page;
     const page = isNaN(req.query.page) || req.query.page === '' ? 1 : req.query.page;
-    console.log(page);
     const startIndex = (page - 1) * 10;
     const endIndex = page * 10;
     const paginatedTreatments = tempData.slice(startIndex, endIndex);
