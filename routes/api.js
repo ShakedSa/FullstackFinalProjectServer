@@ -179,8 +179,8 @@ router.get('/dashboard/:sessionId', async (req, res) => {
     const treatments = await Treatment.find();
     const userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
     let tempData;
-    if (req.query.search && req.query.search !== undefined && req.query.search !== 'undefined') {
-        const searchQuery = req.query.search.toLowerCase();
+    const searchQuery = req.query.search?.toLowerCase();
+    if (searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' || searchQuery !== '') {
         tempData = userTreatments.filter((treatment) => {
             return treatment.treatmentInformation.toLowerCase().includes(searchQuery);
         });
