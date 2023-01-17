@@ -27,14 +27,35 @@ router.post('/login', async (req, res) => {
         if (user.password !== req.body.password) {
             return res.status(400).json({ message: 'Password doesn`t match.' });
         }
+        if (user.isLoggedIn) {
+            return res.status(200).json({ message: 'User already logged in, in a different device. Please logout before trying to log in.' });
+        }
+
         const session = (Math.random() + 1).toString(36).substring(7);
 
         var myquery = { email: user.email };
-        var newvalues = { $set: { sessionId: session } };
+        var newvalues = { $set: { sessionId: session, isLoggedIn: true } };
         const options = { upsert: true };
         await User.updateOne(myquery, newvalues, options);
         return res.json({ sessionId: session });
 
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+})
+
+router.post('/logout', async (req, res) => {
+    try {
+        const allUsers = await User.find();
+        const user = allUsers.find((user) => user.sessionId === req.body.sessionId);
+        if (user === null || user === undefined) {
+            return res.status(400).json({ message: "User doesn't exists. You found a bug!" });
+        }
+        var myquery = { email: user.email };
+        var newvalues = { $set: { isLoggedIn: false } };
+        const options = { upsert: true };
+        await User.updateOne(myquery, newvalues, options);
+        return res.status(200).json({ message: "True" });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
