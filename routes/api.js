@@ -22,13 +22,13 @@ router.post('/login', async (req, res) => {
         const all_users = await User.find();
         user = all_users.find((x) => x.email === req.body.email);
         if (user === null || user === undefined) {
-            return res.status(400).json({ message: 'Email doesn`t exists.' });
+            return res.json({ message: 'Email doesn`t exists.' });
         }
         if (user.password !== req.body.password) {
-            return res.status(400).json({ message: 'Password doesn`t match.' });
+            return res.json({ message: 'Password doesn`t match.' });
         }
         if (user.isLoggedIn) {
-            return res.status(200).json({ message: 'User already logged in, in a different device. Please logout before trying to log in.' });
+            return res.json({ message: 'User already logged in, in a different device. Please logout before trying to log in.' });
         }
 
         const session = (Math.random() + 1).toString(36).substring(7);
@@ -49,7 +49,7 @@ router.post('/logout', async (req, res) => {
         const allUsers = await User.find();
         const user = allUsers.find((user) => user.sessionId === req.body.sessionId);
         if (user === null || user === undefined) {
-            return res.status(400).json({ message: "User doesn't exists. You found a bug!" });
+            return res.status(500).json({ message: "User doesn't exists. You found a bug!" });
         }
         var myquery = { email: user.email };
         var newvalues = { $set: { isLoggedIn: false } };
@@ -69,12 +69,13 @@ router.post('/signup', async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         sessionId: "-1",
+        isLoggedIn: false
     });
 
     try {
         const all_users = await User.find();
-        user = all_users.filter(x => x.email == req.body.email);
-        if (user.length == 0) {
+        user = all_users.find(x => x.email === req.body.email);
+        if (user === null || user === undefined) {
             var mailOptions = {
                 from: 'BestGarageInBraude@gmail.com',
                 to: 'benisraelmichael@gmail.com',
@@ -84,23 +85,23 @@ router.post('/signup', async (req, res) => {
                     '\n\nThank you and drive safe,\n BestGarageInBraude'
             };
 
-            transporter.sendMail(mailOptions, function (error, info) {
+            transporter.sendMail(mailOptions, async function (error, info) {
                 if (error) {
                     console.log(error);
                 } else {
                     console.log('Email sent: ' + info.response);
+                    await new_user.save();
+                    res.json({ message: 'True' });
                 }
             });
 
-            const newUser = await new_user.save();
-            res.json({ message: 'True' });
         }
         else {
             res.json({ message: 'False' });
         }
 
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 })
 
@@ -127,11 +128,11 @@ router.post('/forgetpassword', async (req, res) => {
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
+                res.json({ message: error.message });
             } else {
-                console.log('Email sent: ' + info.response);
+                res.json({ message: 'True', response: info.response });
             }
         });
-        return res.json({ message: 'True' });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -158,7 +159,7 @@ router.post('/contact-us', async (req, res) => {
 
         transporter.sendMail(mailOptions, async function (error, info) {
             if (error) {
-                console.log(error);
+                res.json({ mesage: error.message })
             } else {
                 console.log('Email sent: ' + info.response);
                 const contact = new Contact({
@@ -197,21 +198,25 @@ router.get('/dashboard/:sessionId', async (req, res) => {
     const users = await User.find();
     const user = users.find(x => x.sessionId == req.params.sessionId);
     if (user === null || user === undefined) {
-        res.status(400).json({ message: "Invalid session id. Please login again." });
+        res.json({ message: "Invalid session id. Please login again." });
         return;
     }
     const treatments = await Treatment.find();
     const userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
     let tempData;
     const searchQuery = req.query.search?.toLowerCase();
-    if (searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' || searchQuery !== '') {
+    const isSearchQuery = searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' && searchQuery !== ''
+    if (isSearchQuery) {
         tempData = userTreatments.filter((treatment) => {
-            return treatment.treatmentInformation.toLowerCase().includes(searchQuery);
+            return (treatment.treatmentInformation.toLowerCase().includes(searchQuery)
+                || treatment.treatmentNumber.includes(searchQuery)
+                || treatment.date.toString().includes(searchQuery)
+                || treatment.carNumber.toString().includes(searchQuery))
         });
     } else {
         tempData = userTreatments;
     }
-    const page = isNaN(req.query.page) || req.query.page === '' ? 1 : req.query.page;
+    const page = isNaN(req.query.page) || req.query.page === '' || isSearchQuery ? 1 : req.query.page;
     const startIndex = (page - 1) * 10;
     const endIndex = page * 10;
     const paginatedTreatments = tempData.slice(startIndex, endIndex);
@@ -229,12 +234,12 @@ router.post('/dashboard/createTreatment', async (req, res) => {
     // validate the given e-mail is a signed user
     const user = users.find(x => x.sessionId === sessionId)
     if (user === null || user === undefined) {
-        return res.status(400).json({ message: 'Unable to find user' })
+        return res.json({ message: 'Unable to find user' })
     }
 
     // valiate the given car number
     if (req.body.carNumber.length != 8 || isNaN(req.body.carNumber)) {
-        return res.status(400).json({ message: 'Car number is not valid' })
+        return res.json({ message: 'Car number is not valid' })
     }
 
     const treatments = await Treatment.find();
@@ -268,17 +273,17 @@ router.post('/dashboard/createTreatment', async (req, res) => {
 // request to update a treatment 
 router.patch('/dashboard/updates', async (req, res) => {
     if (req.body.treatmentNumber == null) {
-        return res.status(400).json({ message: 'False' })
+        return resjson({ message: 'False' })
     }
 
     try {
         const treatment = await Treatment.find({ treatmentNumber: req.body.treatmentNumber })
         if (treatment.length == 0) {
-            return res.status(400).json({ message: 'False' })
+            return res.json({ message: 'False' })
         }
         // validate the given car number
         if (req.body.carNumber.length != 8 || isNaN(req.body.carNumber)) {
-            return res.status(400).json({ message: 'Car number is not valid' });
+            return res.json({ message: 'Car number is not valid' });
         }
 
         var myquery = { treatmentNumber: req.body.treatmentNumber };
@@ -301,7 +306,7 @@ router.delete('/dashboard/delete/:id', async (req, res) => {
         if (validation.length == 0) {
             return res.json({ message: 'False' })
         }
-        const treatment = await Treatment.remove({ treatmentNumber: req.params.id });
+        const treatment = await Treatment.deleteOne({ treatmentNumber: req.params.id });
         return res.json({ message: 'True' });
     } catch (err) {
         res.status(500).json({ message: err.mesage }
