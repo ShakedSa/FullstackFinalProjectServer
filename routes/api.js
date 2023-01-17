@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { Treatment, User, Contact } = require('../models/treatment')
 var nodemailer = require('nodemailer')
+const { default: axios } = require('axios')
 
 
 var transporter = nodemailer.createTransport({
@@ -41,6 +42,18 @@ router.post('/login', async (req, res) => {
 
     } catch (err) {
         return res.status(500).json({ message: err.message });
+    }
+})
+
+router.post('/recaptcha', async (req, res) => {
+    const { token } = req.body;
+    const response = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+    );
+    if (response.status === 200) {
+        return res.json({ message: "OK" });
+    } else {
+        return res.json({ message: "NOT_OK" });
     }
 })
 
