@@ -2,8 +2,6 @@ const express = require('express')
 const router = express.Router()
 const { Treatment, User, Contact } = require('../models/treatment')
 var nodemailer = require('nodemailer')
-const { default: axios } = require('axios')
-
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
