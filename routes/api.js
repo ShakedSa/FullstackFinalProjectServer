@@ -177,6 +177,30 @@ router.post('/contact-us', async (req, res) => {
     }
 })
 
+router.post('contact-email', async (req, res) => {
+    const { sessionId } = req.body;
+    const users = await User.find();
+    const user = users.find(user => user.sessionId === sessionId)
+    if (user === null || user === undefined) {
+        return res.json("Invalid session id");
+    }
+
+    var mailOptions = {
+        from: 'BestGarageInBraude@gmail.com',
+        to: user.email,
+        subject: 'BestGarage - Contact us conformation',
+        text: 'Thank you for contacting us.\nWe have received your information and we will get back to regarding your issue.' +
+            '\n\nThank you and drive safe,\n BestGarageInBraude'
+    };
+    transporter.sendMail(mailOptions, async function (error, info) {
+        if (error) {
+            res.json({ mesage: error.message })
+        } else {
+            res.status(200).json({ message: 'True' });
+        }
+    });
+})
+
 
 // request to get all user treatments
 router.get('/dashboard/gettotal/:sessionId', async (req, res) => {
