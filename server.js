@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 app.use(cors(corsOrigin));
 
 mongoose.set("strictQuery", false)
-mongoose.connect("mongodb+srv://shaked:Jr0karZjxP4veE0d@snm-garage.pjfjf0z.mongodb.net/SnM-Garage?retryWrites=true&w=majority", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGO_DB_URL, { useNewUrlParser: true });
 
 const db = mongoose.connection
 db.on('error', (error) => console.error(error))

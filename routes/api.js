@@ -286,7 +286,7 @@ router.patch('/dashboard/updates', async (req, res) => {
         }
 
         var myquery = { treatmentNumber: req.body.treatmentNumber };
-        var newvalues = { $set: { treatmentInformation: req.body.treatmentInformation, carNumber: req.body.carNumber, date: Date.now() } };
+        var newvalues = { $set: { treatmentInformation: req.body.treatmentInformation, carNumber: req.body.carNumber, date: req.body.date } };
         const options = { upsert: true };
 
         await Treatment.updateOne(myquery, newvalues, options);
