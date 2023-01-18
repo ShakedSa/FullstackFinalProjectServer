@@ -177,7 +177,7 @@ router.post('/contact-us', async (req, res) => {
     }
 })
 
-router.post('contact-email', async (req, res) => {
+router.post('/contact-email', async (req, res) => {
     const { sessionId } = req.body;
     const users = await User.find();
     const user = users.find(user => user.sessionId === sessionId)
