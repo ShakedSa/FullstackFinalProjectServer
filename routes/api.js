@@ -45,18 +45,6 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.post('/recaptcha', async (req, res) => {
-    const { token } = req.body;
-    const response = await axios.post(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
-    );
-    if (response.status === 200) {
-        return res.json({ message: "OK" });
-    } else {
-        return res.json({ message: "NOT_OK" });
-    }
-})
-
 router.post('/logout', async (req, res) => {
     try {
         const allUsers = await User.find();
