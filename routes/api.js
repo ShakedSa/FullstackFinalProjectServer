@@ -43,6 +43,16 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.post('/login-session', async (req, res) => {
+    const { sessionId } = req.body;
+    const users = await User.find();
+    const user = users.find(user => user.sessionId === sessionId);
+    if (user === null || user === undefined) {
+        return res.json({ message: 'Session expired, please login again.' });
+    }
+    return res.json({ sessionid: sessionId });
+})
+
 router.post('/logout', async (req, res) => {
     try {
         const allUsers = await User.find();
