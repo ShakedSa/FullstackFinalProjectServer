@@ -50,7 +50,7 @@ router.post('/login-session', async (req, res) => {
     if (user === null || user === undefined) {
         return res.json({ message: 'Session expired, please login again.' });
     }
-    return res.json({ sessionid: sessionId });
+    return res.json({ sessionId: sessionId });
 })
 
 router.post('/logout', async (req, res) => {
