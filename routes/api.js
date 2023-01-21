@@ -87,7 +87,7 @@ router.post('/signup', async (req, res) => {
         if (user === null || user === undefined) {
             var mailOptions = {
                 from: 'BestGarageInBraude@gmail.com',
-                to: 'benisraelmichael@gmail.com',
+                to: user.email,
                 subject: 'Your account has been created successfully',
                 text: 'Dear ' + req.body.email.split('@')[0] +
                     ',\n\nWe are so glad to have you on board!\n You are now one of the exclusive clients of the world famous BestGarage.' +
@@ -122,14 +122,14 @@ router.post('/forgetpassword', async (req, res) => {
 
     try {
         const all_users = await User.find();
-        user = all_users.filter(x => x.email == req.body.email);
-        if (user.length == 0) {
+        user = all_users.find(x => x.email == req.body.email);
+        if (user === null || user === undefined) {
             return res.json({ message: 'False' });
         }
 
         var mailOptions = {
             from: 'BestGarageInBraude@gmail.com',
-            to: 'benisraelmichael@gmail.com',
+            to: user.email,
             subject: 'Recent changes to your BestGarage account',
             text: 'Dear ' + req.body.email.split('@')[0] + ',\n\nAs requested your password is: ' + user[0].password + '\n\nThank you and drive safe,\n BestGarageInBraude'
         };
