@@ -220,6 +220,9 @@ router.get('/dashboard/gettotal/:sessionId', async (req, res) => {
         const users = await User.find();
         const user = users.find((x) => x.sessionId === req.params.sessionId);
         const treatments = await Treatment.find();
+        if (user.email === "admin@admin.com") {
+            return res.json(treatments.length);
+        }
         user_treatments = treatments.filter(x => x.workerEmail === user.email);
         res.json(user_treatments.length);
     } catch (err) {
@@ -235,7 +238,13 @@ router.get('/dashboard/:sessionId', async (req, res) => {
         return;
     }
     const treatments = await Treatment.find();
-    const userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
+    let userTreatments;
+    if (user.email === "admin@admin.com") {
+        userTreatments = treatments;
+    } else {
+        userTreatments = treatments.filter((treatment) => treatment.workerEmail === user.email);
+    }
+
     let tempData;
     const searchQuery = req.query.search?.toLowerCase();
     const isSearchQuery = searchQuery && searchQuery !== undefined && searchQuery !== 'undefined' && searchQuery !== ''
