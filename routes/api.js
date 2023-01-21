@@ -106,7 +106,7 @@ router.post('/signup', async (req, res) => {
 
         }
         else {
-            res.json({ message: 'False' });
+            res.json({ message: 'Account already exists.' });
         }
 
     } catch (err) {
