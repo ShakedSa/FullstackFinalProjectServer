@@ -87,7 +87,7 @@ router.post('/signup', async (req, res) => {
         if (user === null || user === undefined) {
             var mailOptions = {
                 from: 'BestGarageInBraude@gmail.com',
-                to: user.email,
+                to: req.body.email,
                 subject: 'Your account has been created successfully',
                 text: 'Dear ' + req.body.email.split('@')[0] +
                     ',\n\nWe are so glad to have you on board!\n You are now one of the exclusive clients of the world famous BestGarage.' +
